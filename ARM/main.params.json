@@ -1,0 +1,30 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "resourceGroupNameSA": {
+            "value": "web1-store1-rg"
+        },
+        "resourceGroupNameApp": {
+            "value": "web1-app1-rg"
+        },
+        "storageAccountName": {
+            "value": "emartweb1store1392"
+        },
+        "location": {
+            "value": "westus"
+        },
+        "planName": {
+            "value": "emart-web1-plan"
+        },
+        "planSku": {
+            "value": "F1"
+        },
+        "linuxFxVersion": {
+            "value": "DOTNETCORE|6.0"
+        },
+        "appName": {
+            "value": "emart-web1dev-app3432"
+        }
+    }
+}

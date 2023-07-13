@@ -1,0 +1,103 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "rg1Name": {
+            "type": "string",
+            "defaultValue": "rg1-rg"
+        },
+        "rg1Location": {
+            "type": "string",
+            "defaultValue": "westus"
+        },
+        "storage1Name": {
+            "type": "string",
+            "defaultValue": "tempstore0x01"
+        },
+        "rg2Name": {
+            "type": "string",
+            "defaultValue": "rg2-rg"
+        },
+        "rg2Location": {
+            "type": "string",
+            "defaultValue": "westus"
+        },
+        "storage2Name": {
+            "type": "string",
+            "defaultValue": "tempstore0x02"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2022-09-01",
+            "name": "[parameters('rg1Name')]",
+            "location": "[parameters('rg1Location')]",
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2022-09-01",
+            "name": "[parameters('rg2Name')]",
+            "location": "[parameters('rg2Location')]",
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2022-09-01",
+            "name": "storageDeployment",
+            "resourceGroup": "[parameters('rg1Name')]",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+                        {
+                            "type": "Microsoft.Storage/storageAccounts",
+                            "apiVersion": "2022-09-01",
+                            "name": "[parameters('storage1Name')]",
+                            "location": "[parameters('rg1Location')]",
+                            "sku": {
+                                "name": "Standard_LRS"
+                            },
+                            "kind": "StorageV2"
+                        }
+                    ]
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/resourceGroups/', parameters('rg1Name'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2022-09-01",
+            "name": "storageDeployment",
+            "resourceGroup": "[parameters('rg2Name')]",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+                        {
+                            "type": "Microsoft.Storage/storageAccounts",
+                            "apiVersion": "2022-09-01",
+                            "name": "[parameters('storage2Name')]",
+                            "location": "[parameters('rg2Location')]",
+                            "sku": {
+                                "name": "Standard_LRS"
+                            },
+                            "kind": "StorageV2"
+                        }
+                    ]
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/resourceGroups/', parameters('rg2Name'))]"
+            ]
+        }
+    ]
+}

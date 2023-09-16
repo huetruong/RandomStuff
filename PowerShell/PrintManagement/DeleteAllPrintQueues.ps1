@@ -1,4 +1,5 @@
 # Get all printers and delete all of them
+# Need to run PowerShell as Administrator
 
 $printers = Get-Printer
 

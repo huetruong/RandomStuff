@@ -9,7 +9,7 @@
 .PARAMETER csvFile
     The file path and name of the CSV file to export the inactive users to. Default value is the current date and time in the format "yyyy-MM-dd-HHmmss" followed by " Inactive Users.csv".
 .EXAMPLE
-    .\GetADUserLastLogin.ps1
+    .\GetinactiveADUsers.ps1
     Retrieves the last login time for all Active Directory users and exports the inactive users to a CSV file.
 .NOTES
     Author: Hue Truong

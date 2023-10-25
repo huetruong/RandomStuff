@@ -17,11 +17,11 @@
     Version: 1.0.0
 #>
 
-[cmdletbinding()]
-param (
-    [Parameter(Mandatory=$false)]
-    [System.Int32]$daysInactive = 30,
-    [string]$csvFile = (Get-Date -Format "yyyy-MM-dd-HHmmss") + " Inactive Users.csv"
+[CmdletBinding()]
+param(
+  [Parameter(Mandatory = $false)]
+  [System.Int32]$daysInactive = 30,
+  [string]$csvFile = (Get-Date -Format "yyyy-MM-dd-HHmmss") + " Inactive Users.csv"
 )
 
 # Import the ActiveDirectory module
@@ -29,61 +29,61 @@ Import-Module ActiveDirectory
 
 # Get all AD users
 Write-Verbose "Getting all AD users..."
-$users = Get-ADUser -Filter * -Properties Description, LastLogonTimestamp
+$users = Get-ADUser -Filter * -Properties Description,LastLogonTimestamp
 
 $inactiveUsers = @()
 
-write-verbose "Getting active users..."
+Write-Verbose "Getting active users..."
 # Loop through each user
 foreach ($user in $users) {
 
-    if ($user.Enabled -eq $true) {
- 
-        Write-Verbose "Working on $($user.name)"
-        Write-Verbose "DistingushedName = $($user.DistinguishedName)"
-        Write-Verbose "SamACcountName = $($user.SamAccountName)"
-        Write-Verbose "UserPrincipalName = $($user.UserPrincipalName)"
+  if ($user.Enabled -eq $true) {
 
-        # Get the user's last login time
-        $lastLogon = Get-ADUser $user -Properties LastLogonTimestamp | Select-Object -ExpandProperty LastLogonTimestamp
+    Write-Verbose "Working on $($user.name)"
+    Write-Verbose "DistingushedName = $($user.DistinguishedName)"
+    Write-Verbose "SamACcountName = $($user.SamAccountName)"
+    Write-Verbose "UserPrincipalName = $($user.UserPrincipalName)"
 
-        if ($lastLogon) {
-            # Convert the last login time to a DateTime object
-            $lastLogonDate = [DateTime]::FromFileTime($lastLogon)
+    # Get the user's last login time
+    $lastLogon = Get-ADUser $user -Properties LastLogonTimestamp | Select-Object -ExpandProperty LastLogonTimestamp
 
-            # Calculate the number of days since the user's last login
-            $daysSinceLastLogon = (Get-Date) - $lastLogonDate
-            Write-Verbose "Days since last logon: $daysSinceLastLogon"
-        }
-        else {
-            $daysSinceLastLogon = -1
-            Write-Verbose "Days since last logon: Never"
-        }
+    if ($lastLogon) {
+      # Convert the last login time to a DateTime object
+      $lastLogonDate = [datetime]::FromFileTime($lastLogon)
 
-        # If the number of days is greater than the specified number of days, add the user to the inactive users object
-        if (($daysSinceLastLogon.Days -gt $daysInactive) -or ($daysSinceLastLogon -eq -1)) {
-            if ($daysSinceLastLogon -eq -1) {
-                $lastLogonDate = "Never"
-            } else { 
-                $lastLogonDate = $lastLogonDate.ToString("MM-dd-yyyy")
-                Write-Verbose "Last logon date: $lastLogonDate"
-            }           
-            $userObject = [PSCustomObject]@{
-                Name = $user.Name
-                SamAccountName = $user.SamAccountName
-                UserPrincipalName = $user.UserPrincipalName
-                DistinguishedName = $user.DistinguishedName
-                Description = $user.Description
-                LastLogon = $lastLogonDate
-                }
-            $inactiveUsers += $userObject
-            Write-Verbose "Added $($user.Name) to inactive users object"
-        }
+      # Calculate the number of days since the user's last login
+      $daysSinceLastLogon = (Get-Date) - $lastLogonDate
+      Write-Verbose "Days since last logon: $daysSinceLastLogon"
     }
+    else {
+      $daysSinceLastLogon = -1
+      Write-Verbose "Days since last logon: Never"
+    }
+
+    # If the number of days is greater than the specified number of days, add the user to the inactive users object
+    if (($daysSinceLastLogon.Days -gt $daysInactive) -or ($daysSinceLastLogon -eq -1)) {
+      if ($daysSinceLastLogon -eq -1) {
+        $lastLogonDate = "Never"
+      } else {
+        $lastLogonDate = $lastLogonDate.ToString("MM-dd-yyyy")
+        Write-Verbose "Last logon date: $lastLogonDate"
+      }
+      $userObject = [pscustomobject]@{
+        Name = $user.Name
+        SamAccountName = $user.SamAccountName
+        UserPrincipalName = $user.UserPrincipalName
+        DistinguishedName = $user.DistinguishedName
+        Description = $user.Description
+        LastLogon = $lastLogonDate
+      }
+      $inactiveUsers += $userObject
+      Write-Verbose "Added $($user.Name) to inactive users object"
+    }
+  }
 }
 
 Write-Verbose "Exporting inactive users to $csvFile"
 # Export the custom objects of empty groups to a CSV file
 if ($inactiveUsers.Count -gt 0) {
-    $inactiveUsers | Export-Csv -Path $csvFile -NoTypeInformation 
+  $inactiveUsers | Export-Csv -Path $csvFile -NoTypeInformation
 }

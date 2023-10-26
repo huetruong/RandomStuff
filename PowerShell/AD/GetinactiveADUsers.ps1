@@ -83,8 +83,10 @@ foreach ($user in $users) {
   }
 }
 
-Write-Output "Exporting inactive users to $csvFile"
 # Export the custom objects of empty groups to a CSV file
 if ($inactiveUsers.Count -gt 0) {
+  Write-Output "Exporting inactive users to $csvFile"
   $inactiveUsers | Export-Csv -Path $csvFile -NoTypeInformation
+} else {
+  Write-Output "No inactive users found."
 }

@@ -27,6 +27,7 @@ param(
 # Import the ActiveDirectory module
 Import-Module ActiveDirectory
 
+Write-Output "Starting up..."
 # Get all AD users
 Write-Verbose "Getting all AD users..."
 $users = Get-ADUser -Filter * -Properties Description,LastLogonTimestamp
@@ -82,7 +83,7 @@ foreach ($user in $users) {
   }
 }
 
-Write-Verbose "Exporting inactive users to $csvFile"
+Write-Output "Exporting inactive users to $csvFile"
 # Export the custom objects of empty groups to a CSV file
 if ($inactiveUsers.Count -gt 0) {
   $inactiveUsers | Export-Csv -Path $csvFile -NoTypeInformation

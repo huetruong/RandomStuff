@@ -23,7 +23,7 @@ foreach ($group in $ADGroups) {
     Write-Verbose "$($group.Name) is empty."
 
     # Delete the group with -WhatIf
-    # Remove-ADGroup -Identity $group.DistinguishedName -Confirm:$false -WhatIf 
+    Remove-ADGroup -Identity $group.DistinguishedName -Confirm:$false -WhatIf 
   } else {
     Write-Verbose "$($group.Name) is not empty."
   }

@@ -1,3 +1,21 @@
+<#
+.SYNOPSIS
+  This script removes empty Active Directory groups.
+
+.DESCRIPTION
+  This script takes a CSV file containing a list of AD group names and checks if each group is empty. If a group is empty, it is deleted. The names of the deleted groups are exported to a CSV file.
+
+.PARAMETER csvFile
+  The path to the CSV file containing the list of AD group names.
+
+.EXAMPLE
+  RemoveEmptyADGroups.ps1 -csvFile "C:\Temp\ADGroups.csv"
+
+.NOTES
+  Author: Hue Truong
+  Date: 10/26/2023
+#>
+
 [CmdletBinding()]
 param(
   [Parameter(Mandatory = $true)]
